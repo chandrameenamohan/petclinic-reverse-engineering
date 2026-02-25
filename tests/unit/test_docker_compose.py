@@ -47,17 +47,17 @@ def test_all_11_services_defined() -> None:
 
 
 EXPECTED_PORTS: dict[str, str] = {
-    "config-server": "8888:8888",
-    "discovery-server": "8761:8761",
+    "config-server": "18888:8888",
+    "discovery-server": "18761:8761",
     "customers-service": "8081:8081",
     "visits-service": "8082:8082",
     "vets-service": "8083:8083",
     "genai-service": "8084:8084",
     "api-gateway": "8080:8080",
     "admin-server": "9090:9090",
-    "tracing-server": "9411:9411",
-    "grafana-server": "3030:3000",
-    "prometheus-server": "9091:9090",
+    "tracing-server": "19411:9411",
+    "grafana-server": "13030:3000",
+    "prometheus-server": "19091:9090",
 }
 
 

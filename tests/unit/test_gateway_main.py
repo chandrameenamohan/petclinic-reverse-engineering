@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator
 
+import httpx
 import pytest
+import respx
 from fastapi import FastAPI
 from httpx import ASGITransport, AsyncClient
 
@@ -58,8 +60,12 @@ class TestGatewayRoutersIncluded:
         response = await client.get("/api/unknown/test")
         assert response.status_code == 404
 
+    @respx.mock
     async def test_bff_route_mounted(self, client: AsyncClient) -> None:
         """BFF route should be mounted — returns 502 when customers-service is down."""
+        respx.get("http://localhost:8081/owners/1").mock(
+            side_effect=httpx.ConnectError("Connection refused")
+        )
         response = await client.get("/api/gateway/owners/1")
         assert response.status_code == 502
 

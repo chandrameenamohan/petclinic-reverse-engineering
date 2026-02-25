@@ -20,11 +20,23 @@ This is not a partial port or proof-of-concept. It is a **complete reverse engin
 - **Full frontend** faithfully reproducing the original AngularJS UI, including the GenAI chat widget
 - **Identical seed data**: 10 owners, 13 pets, 6 vets, 4 visits, 6 pet types
 
-## Application Screenshot
+## Application Screenshots
 
-> **Note:** To see the application UI, start the stack with `docker compose up --build` and visit http://localhost:8080. The Python/FastAPI version faithfully reproduces the original Petclinic UI using HTMX and Jinja2 server-side rendering.
+The following screenshots were captured from the live Python/FastAPI application using Playwright:
 
-The Python version faithfully reproduces the original Spring Petclinic UI, including the owners list, owner details with pets and visits, veterinarians list, and all CRUD forms. The chat widget is visible on every page.
+| Welcome Page | Owners List |
+|:---:|:---:|
+| ![Welcome Page](docs/screenshots/01-welcome-page.png) | ![Owners List](docs/screenshots/02-owners-list.png) |
+
+| Owner Detail | Veterinarians |
+|:---:|:---:|
+| ![Owner Detail](docs/screenshots/03-owner-detail.png) | ![Vets List](docs/screenshots/04-vets-list.png) |
+
+| New Owner Form | Add Pet Form | Add Visit Form |
+|:---:|:---:|:---:|
+| ![New Owner](docs/screenshots/05-new-owner-form.png) | ![Add Pet](docs/screenshots/06-add-pet-form.png) | ![Add Visit](docs/screenshots/07-add-visit-form.png) |
+
+> **Note:** Screenshots show unstyled HTML because static assets (CSS/JS/images) require the full Docker Compose stack. Run `docker compose up --build` and visit http://localhost:8080 to see the fully styled application with Bootstrap CSS, pet images, and the Spring Petclinic theme.
 
 ## Architecture
 
@@ -213,7 +225,7 @@ Spring Petclinic includes a chatbot that allows you to interact with the applica
 5. Add a dog for Betty. Its name is Moopsie.
 6. Create a new owner.
 
-> **Chat Widget:** The GenAI chatbot is accessible from the bottom-right corner of every page. It uses the OpenAI Python SDK with function calling to query owners, pets, vets, and create visits through natural language. Vet data is also indexed in ChromaDB for RAG-based retrieval.
+> **Chat Widget:** Visible in all screenshots above (bottom of page — "Chat with Us!"). The GenAI chatbot uses the OpenAI Python SDK with function calling to query owners, pets, vets, and create visits through natural language. Vet data is also indexed in ChromaDB for RAG-based retrieval. Requires `OPENAI_API_KEY` in `.env`.
 
 ### How It Works
 
@@ -267,7 +279,7 @@ Database schema is created automatically at startup, and seed data is loaded if 
 
 Grafana and Prometheus are included in the `docker-compose.yml` configuration. The business services have been instrumented with [prometheus-fastapi-instrumentator](https://github.com/trallnag/prometheus-fastapi-instrumentator) to collect custom business metrics alongside standard HTTP request metrics.
 
-> **Grafana Dashboard:** Available at http://localhost:13030 after starting with Docker Compose. Pre-configured with Prometheus datasource and custom Petclinic metrics dashboard showing request latency, throughput, and business metrics.
+> **Grafana Dashboard:** Available at http://localhost:13030 after starting with Docker Compose. Pre-configured with Prometheus datasource and custom Petclinic metrics dashboard tracking request latency, throughput, and business operation counts.
 
 ### Using Prometheus
 

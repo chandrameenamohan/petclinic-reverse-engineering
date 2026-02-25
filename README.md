@@ -36,7 +36,9 @@ The following screenshots were captured from the live Python/FastAPI application
 |:---:|:---:|:---:|
 | ![New Owner](docs/screenshots/05-new-owner-form.png) | ![Add Pet](docs/screenshots/06-add-pet-form.png) | ![Add Visit](docs/screenshots/07-add-visit-form.png) |
 
-> **Note:** Screenshots show unstyled HTML because static assets (CSS/JS/images) require the full Docker Compose stack. Run `docker compose up --build` and visit http://localhost:8080 to see the fully styled application with Bootstrap CSS, pet images, and the Spring Petclinic theme.
+| GenAI Chat Widget | Grafana Metrics Dashboard |
+|:---:|:---:|
+| ![Chat Widget](docs/screenshots/08-chat-widget.png) | ![Grafana Dashboard](docs/screenshots/09-grafana-dashboard.png) |
 
 ## Architecture
 
@@ -225,7 +227,7 @@ Spring Petclinic includes a chatbot that allows you to interact with the applica
 5. Add a dog for Betty. Its name is Moopsie.
 6. Create a new owner.
 
-> **Chat Widget:** Visible in all screenshots above (bottom of page — "Chat with Us!"). The GenAI chatbot uses the OpenAI Python SDK with function calling to query owners, pets, vets, and create visits through natural language. Vet data is also indexed in ChromaDB for RAG-based retrieval. Requires `OPENAI_API_KEY` in `.env`.
+> **Chat Widget:** The "Chat with Us!" widget is visible at the bottom of every page (see [chat screenshot](docs/screenshots/08-chat-widget.png)). The GenAI chatbot uses the OpenAI Python SDK with function calling to query owners, pets, vets, and create visits through natural language. Vet data is also indexed in ChromaDB for RAG-based retrieval. Requires `OPENAI_API_KEY` in `.env`.
 
 ### How It Works
 
@@ -279,7 +281,7 @@ Database schema is created automatically at startup, and seed data is loaded if 
 
 Grafana and Prometheus are included in the `docker-compose.yml` configuration. The business services have been instrumented with [prometheus-fastapi-instrumentator](https://github.com/trallnag/prometheus-fastapi-instrumentator) to collect custom business metrics alongside standard HTTP request metrics.
 
-> **Grafana Dashboard:** Available at http://localhost:13030 after starting with Docker Compose. Pre-configured with Prometheus datasource and custom Petclinic metrics dashboard tracking request latency, throughput, and business operation counts.
+> **Grafana Dashboard:** Available at http://localhost:13030 after starting with Docker Compose (see [dashboard screenshot](docs/screenshots/09-grafana-dashboard.png)). Pre-configured with Prometheus datasource and custom Petclinic metrics dashboard tracking operation latency, throughput, service health, and business operation counts.
 
 ### Using Prometheus
 

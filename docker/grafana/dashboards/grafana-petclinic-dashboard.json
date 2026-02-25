@@ -1,10 +1,10 @@
 {
   "id": null,
   "uid": "petclinic",
-  "title": "Spring Petclinic Metrics",
+  "title": "Petclinic Metrics",
   "timezone": "browser",
-  "schemaVersion": 16,
-  "version": 1,
+  "schemaVersion": 39,
+  "version": 2,
   "refresh": "5s",
   "time": {
     "from": "now-15m",
@@ -16,182 +16,270 @@
   "annotations": {
     "list": []
   },
-  "rows": [
+  "panels": [
     {
-      "title": "HTTP Metrics",
-      "collapse": false,
-      "panels": [
+      "title": "Service Health",
+      "type": "row",
+      "id": 100,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "collapsed": false
+    },
+    {
+      "title": "Owner Operation Latency",
+      "type": "timeseries",
+      "id": 1,
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 1 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": false,
+            "showPoints": "never"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
         {
-          "title": "HTTP Request Latency",
-          "type": "graph",
-          "id": 1,
-          "span": 6,
-          "datasource": "Prometheus",
-          "targets": [
-            {
-              "expr": "sum(rate(http_server_requests_seconds_sum{status!~\"5..\"}[1m]))/sum(rate(http_server_requests_seconds_count{status!~\"5..\"}[1m]))",
-              "legendFormat": "avg latency",
-              "refId": "A"
-            },
-            {
-              "expr": "max(http_server_requests_seconds_max{status!~\"5..\"})",
-              "legendFormat": "max latency",
-              "refId": "B"
-            }
-          ],
-          "yaxes": [
-            { "format": "s", "label": "Duration", "show": true },
-            { "format": "short", "show": false }
-          ],
-          "xaxis": { "show": true },
-          "lines": true,
-          "fill": 1,
-          "linewidth": 2,
-          "nullPointMode": "null"
+          "expr": "sum(rate(petclinic_owner_seconds_sum[1m]))/sum(rate(petclinic_owner_seconds_count[1m]))",
+          "legendFormat": "avg owner op latency",
+          "refId": "A"
         },
         {
-          "title": "HTTP Request Activity",
-          "type": "graph",
-          "id": 2,
-          "span": 6,
-          "datasource": "Prometheus",
-          "targets": [
-            {
-              "expr": "sum(rate(http_server_requests_seconds_count[1m]))",
-              "legendFormat": "total requests/s",
-              "refId": "A"
-            },
-            {
-              "expr": "sum(rate(http_server_requests_seconds_count{status=~\"5..\"}[1m]))",
-              "legendFormat": "5xx errors/s",
-              "refId": "B"
-            }
-          ],
-          "yaxes": [
-            { "format": "ops", "label": "Requests/s", "show": true },
-            { "format": "short", "show": false }
-          ],
-          "xaxis": { "show": true },
-          "lines": true,
-          "fill": 1,
-          "linewidth": 2,
-          "nullPointMode": "null"
+          "expr": "histogram_quantile(0.99, sum(rate(petclinic_owner_seconds_bucket[1m])) by (le))",
+          "legendFormat": "p99 owner op latency",
+          "refId": "B"
+        },
+        {
+          "expr": "sum(rate(petclinic_visit_seconds_sum[1m]))/sum(rate(petclinic_visit_seconds_count[1m]))",
+          "legendFormat": "avg visit op latency",
+          "refId": "C"
+        }
+      ]
+    },
+    {
+      "title": "Request Throughput",
+      "type": "timeseries",
+      "id": 2,
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 1 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "spanNulls": false,
+            "showPoints": "never"
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "expr": "sum(rate(petclinic_owner_seconds_count[1m]))",
+          "legendFormat": "owner ops/s",
+          "refId": "A"
+        },
+        {
+          "expr": "sum(rate(petclinic_visit_seconds_count[1m]))",
+          "legendFormat": "visit ops/s",
+          "refId": "B"
         }
       ]
     },
     {
       "title": "Business Metrics",
-      "collapse": false,
-      "panels": [
-        {
-          "title": "Owners Updated",
-          "type": "singlestat",
-          "id": 3,
-          "span": 3,
-          "datasource": "Prometheus",
-          "targets": [
-            {
-              "expr": "sum(petclinic_owner_seconds_count{method=\"updateOwner\", exception=\"none\"})",
-              "refId": "A"
-            }
-          ],
-          "valueName": "current",
-          "format": "none",
-          "sparkline": { "show": true, "full": false }
+      "type": "row",
+      "id": 101,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 9 },
+      "collapsed": false
+    },
+    {
+      "title": "Owner Operations",
+      "type": "stat",
+      "id": 3,
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 10 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 100 },
+              { "color": "red", "value": 500 }
+            ]
+          }
         },
+        "overrides": []
+      },
+      "options": {
+        "graphMode": "area",
+        "colorMode": "background",
+        "textMode": "value",
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      },
+      "targets": [
         {
-          "title": "Owners Created",
-          "type": "singlestat",
-          "id": 4,
-          "span": 3,
-          "datasource": "Prometheus",
-          "targets": [
-            {
-              "expr": "sum(petclinic_owner_seconds_count{method=\"createOwner\", exception=\"none\"})",
-              "refId": "A"
-            }
-          ],
-          "valueName": "current",
-          "format": "none",
-          "sparkline": { "show": true, "full": false }
-        },
-        {
-          "title": "Pets Created",
-          "type": "singlestat",
-          "id": 5,
-          "span": 3,
-          "datasource": "Prometheus",
-          "targets": [
-            {
-              "expr": "sum(petclinic_pet_seconds_count{method=\"processCreationForm\", exception=\"none\"})",
-              "refId": "A"
-            }
-          ],
-          "valueName": "current",
-          "format": "none",
-          "sparkline": { "show": true, "full": false }
-        },
-        {
-          "title": "Visits Created",
-          "type": "singlestat",
-          "id": 6,
-          "span": 3,
-          "datasource": "Prometheus",
-          "targets": [
-            {
-              "expr": "sum(petclinic_visit_seconds_count{method=\"read\", exception=\"none\"})",
-              "refId": "A"
-            }
-          ],
-          "valueName": "current",
-          "format": "none",
-          "sparkline": { "show": true, "full": false }
+          "expr": "sum(petclinic_owner_seconds_count) or vector(0)",
+          "refId": "A"
         }
       ]
     },
     {
-      "title": "SPC Business Activity",
-      "collapse": false,
-      "panels": [
+      "title": "Visit Operations",
+      "type": "stat",
+      "id": 4,
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 10 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 100 },
+              { "color": "red", "value": 500 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "graphMode": "area",
+        "colorMode": "background",
+        "textMode": "value",
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      },
+      "targets": [
         {
-          "title": "SPC Business Histogram",
-          "type": "graph",
-          "id": 7,
-          "span": 12,
-          "datasource": "Prometheus",
-          "targets": [
-            {
-              "expr": "sum(rate(petclinic_owner_seconds_count{method=\"createOwner\", exception=\"none\"}[1m]))",
-              "legendFormat": "owners created",
-              "refId": "A"
-            },
-            {
-              "expr": "sum(rate(petclinic_owner_seconds_count{method=\"updateOwner\", exception=\"none\"}[1m]))",
-              "legendFormat": "owners updated",
-              "refId": "B"
-            },
-            {
-              "expr": "sum(rate(petclinic_pet_seconds_count{method=\"processCreationForm\", exception=\"none\"}[1m]))",
-              "legendFormat": "pets created",
-              "refId": "C"
-            },
-            {
-              "expr": "sum(rate(petclinic_visit_seconds_count{method=\"read\", exception=\"none\"}[1m]))",
-              "legendFormat": "visits created",
-              "refId": "D"
-            }
-          ],
-          "yaxes": [
-            { "format": "ops", "label": "Operations/s", "show": true },
-            { "format": "short", "show": false }
-          ],
-          "xaxis": { "show": true },
-          "lines": true,
-          "fill": 1,
-          "linewidth": 2,
-          "nullPointMode": "null",
-          "bars": false,
-          "stack": false
+          "expr": "sum(petclinic_visit_seconds_count) or vector(0)",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Services Up",
+      "type": "stat",
+      "id": 5,
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 10 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 2 },
+              { "color": "green", "value": 3 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "graphMode": "none",
+        "colorMode": "background",
+        "textMode": "value",
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      },
+      "targets": [
+        {
+          "expr": "count(up{job!=\"prometheus\"} == 1)",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Memory Usage (MB)",
+      "type": "stat",
+      "id": 6,
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 10 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decmbytes",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 500 },
+              { "color": "red", "value": 1000 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "graphMode": "area",
+        "colorMode": "background",
+        "textMode": "value",
+        "reduceOptions": { "calcs": ["lastNotNull"] }
+      },
+      "targets": [
+        {
+          "expr": "sum(process_resident_memory_bytes) / 1024 / 1024",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "title": "Service Activity",
+      "type": "row",
+      "id": 102,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 14 },
+      "collapsed": false
+    },
+    {
+      "title": "Operation Rate by Method",
+      "type": "timeseries",
+      "id": 7,
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 15 },
+      "datasource": { "type": "prometheus", "uid": "PBFA97CFB590B2093" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ops",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 30,
+            "spanNulls": false,
+            "showPoints": "never",
+            "stacking": { "mode": "normal" },
+            "drawStyle": "bars",
+            "barAlignment": 0
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "multi" }
+      },
+      "targets": [
+        {
+          "expr": "sum by (method) (rate(petclinic_owner_seconds_count[1m]))",
+          "legendFormat": "owner:{{method}}",
+          "refId": "A"
+        },
+        {
+          "expr": "sum by (method) (rate(petclinic_visit_seconds_count[1m]))",
+          "legendFormat": "visit:{{method}}",
+          "refId": "B"
         }
       ]
     }

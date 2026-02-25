@@ -28,7 +28,7 @@ body, h1, h2, h3, p, input {
   margin: 0;
   font-weight: 400;
   font-family: "varela_roundregular", sans-serif;
-  color: #34302d;
+  color: #1a1a2e;
 }
 
 h1 {
@@ -67,11 +67,11 @@ body {
   padding-top: 0;
 }
 
-/* ── Navbar (Spring style) ─────────────────────────────── */
+/* ── Navbar (Python/FastAPI style) ────────────────────── */
 
 .navbar {
-  border-top: 6px solid #6db33f;
-  background-color: #34302d;
+  border-top: 6px solid #306998;
+  background-color: #1a1a2e;
   margin-bottom: 0;
   border-bottom: 0;
   border-left: 0;
@@ -79,7 +79,7 @@ body {
 }
 
 .navbar a.navbar-brand {
-  background: url("/static/images/spring-logo-dataflow.png") -1px -1px no-repeat;
+  background: url("/static/images/python-petclinic-logo.svg") -1px -1px no-repeat;
   margin: 12px 0 6px;
   width: 229px;
   height: 46px;
@@ -92,7 +92,7 @@ body {
   display: block;
   width: 229px;
   height: 46px;
-  background: url("/static/images/spring-logo-dataflow.png") -1px -48px no-repeat;
+  background: url("/static/images/python-petclinic-logo.svg") -1px -48px no-repeat;
   opacity: 0;
   transition: opacity 0.12s ease-in-out;
 }
@@ -120,8 +120,8 @@ body {
 }
 
 .navbar li:hover > a {
-  color: #eeeeee;
-  background-color: #6db33f;
+  color: #FFD43B;
+  background-color: #306998;
 }
 
 .navbar-toggler {
@@ -139,7 +139,7 @@ body {
 
 @media (max-width: 991.98px) {
   .navbar a.navbar-brand {
-    background: url("/static/images/spring-logo-dataflow-mobile.png") 0 0 no-repeat;
+    background: url("/static/images/python-petclinic-logo-mobile.svg") 0 0 no-repeat;
     width: 148px;
     height: 50px;
     margin: 4px 0;
@@ -148,7 +148,7 @@ body {
   .navbar a.navbar-brand span {
     width: 148px;
     height: 50px;
-    background: url("/static/images/spring-logo-dataflow-mobile.png") 0 -50px no-repeat;
+    background: url("/static/images/python-petclinic-logo-mobile.svg") 0 -50px no-repeat;
   }
 
   .navbar li > a,
@@ -190,7 +190,7 @@ footer hr {
 
 /* Header */
 #chatbox-header {
-  background: #075E54;
+  background: #306998;
   color: #fff;
   padding: 0.75rem 1rem;
   cursor: pointer;
@@ -278,7 +278,7 @@ footer hr {
 
 .chat-bubble.user {
   align-self: flex-end;
-  background: #dcf8c6;
+  background: #e8f0fe;
   color: #212529;
   border-bottom-right-radius: 0.25rem;
 }
@@ -346,8 +346,8 @@ footer hr {
 }
 
 #chatbox-input:focus {
-  border-color: #075E54;
-  box-shadow: 0 0 0 2px rgba(7, 94, 84, 0.15);
+  border-color: #306998;
+  box-shadow: 0 0 0 2px rgba(48, 105, 152, 0.15);
 }
 
 #chatbox-input::placeholder {
@@ -355,7 +355,7 @@ footer hr {
 }
 
 #chatbox-send-btn {
-  background: #075E54;
+  background: #306998;
   color: #fff;
   border: none;
   border-radius: 50%;
@@ -371,7 +371,7 @@ footer hr {
 }
 
 #chatbox-send-btn:hover {
-  background: #128C7E;
+  background: #244d70;
   transform: scale(1.05);
 }
 

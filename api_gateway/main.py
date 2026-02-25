@@ -53,7 +53,7 @@ def create_app() -> FastAPI:
 
     # --- Static files (SPA) — must be last so catch-all doesn't shadow API routes ---
     if _STATIC_DIR.is_dir():
-        app.mount("/", StaticFiles(directory=str(_STATIC_DIR), html=True), name="static")
+        app.mount("/static", StaticFiles(directory=str(_STATIC_DIR)), name="static")
 
     logger.info("API Gateway configured on port {}", settings.service_port)
     return app

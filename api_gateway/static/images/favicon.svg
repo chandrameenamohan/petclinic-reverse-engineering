@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="blueGradI" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3C78A9"/>
+      <stop offset="100%" stop-color="#306998"/>
+    </linearGradient>
+    <linearGradient id="yellowGradI" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFE873"/>
+      <stop offset="100%" stop-color="#FFD43B"/>
+    </linearGradient>
+  </defs>
+  <!-- Blue snake circle (upper-left) -->
+  <path d="M15.5 1C11.5 1 8.5 2.2 8.5 4.5v3.2h6.8v1H8C5.5 8.7 4 10.8 4 13.5c0 3 1.8 5 4 5h2.2v-3c0-2.2 2-4 4.3-4h6.2c2.2 0 4-1.8 4-4V4.5c0-2.3-3-3.5-9.2-3.5zm-4.8 2.8a1.4 1.4 0 1 1 0 2.8 1.4 1.4 0 0 1 0-2.8z" fill="url(#blueGradI)"/>
+  <!-- Yellow snake circle (lower-right) -->
+  <path d="M15 13.5c-2.3 0-4.3 1.8-4.3 4v3.2c0 2.3 3 3.5 9.2 3.5h3.4c3.5 0 6.2-1 6.2-3.2v-3h-6.8v-1H28c2.5 0 4-2 4-5s-1.8-5-4-5h-2.2v3c0 2.2-2 4-4.3 4H15zm9.3 4.9a1.4 1.4 0 1 1 0 2.8 1.4 1.4 0 0 1 0-2.8z" fill="url(#yellowGradI)"/>
+</svg>

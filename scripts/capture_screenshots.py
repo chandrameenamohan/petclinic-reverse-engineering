@@ -1,75 +1,90 @@
-"""Capture screenshots of the running Petclinic application using Playwright."""
+"""Capture fully-styled screenshots of the running Petclinic application using Playwright."""
 
 import asyncio
+import sys
+from pathlib import Path
+
 from playwright.async_api import async_playwright
 
 
-async def capture():
+SCREENSHOTS_DIR = Path("docs/screenshots")
+BASE_URL = "http://localhost:8080"
+
+PAGES = [
+    {
+        "name": "01-welcome-page",
+        "url": "/",
+        "full_page": False,
+        "description": "Welcome / Home page",
+    },
+    {
+        "name": "02-owners-list",
+        "url": "/owners",
+        "full_page": True,
+        "description": "Owners list (all 10 owners)",
+    },
+    {
+        "name": "03-owner-detail",
+        "url": "/owners/details/1",
+        "full_page": True,
+        "description": "Owner detail - George Franklin",
+    },
+    {
+        "name": "04-vets-list",
+        "url": "/vets",
+        "full_page": True,
+        "description": "Veterinarians list",
+    },
+    {
+        "name": "05-new-owner-form",
+        "url": "/owners/new",
+        "full_page": False,
+        "description": "Register new owner form",
+    },
+    {
+        "name": "06-add-pet-form",
+        "url": "/owners/1/new-pet",
+        "full_page": False,
+        "description": "Add pet form (owner 1)",
+    },
+    {
+        "name": "07-add-visit-form",
+        "url": "/owners/1/pets/1/visits",
+        "full_page": False,
+        "description": "Add visit form (owner 1, pet 1)",
+    },
+]
+
+
+async def capture() -> None:  # noqa: ANN201
+    """Capture screenshots of all key pages."""
+    SCREENSHOTS_DIR.mkdir(parents=True, exist_ok=True)
+
     async with async_playwright() as p:
         browser = await p.chromium.launch()
         page = await browser.new_page(viewport={"width": 1280, "height": 900})
 
-        # 1. Welcome page
-        print("Capturing 01-welcome-page...")
-        await page.goto("http://localhost:8080/")
-        await page.wait_for_load_state("networkidle")
-        await page.screenshot(
-            path="docs/screenshots/01-welcome-page.png", full_page=False
-        )
+        for entry in PAGES:
+            url = f"{BASE_URL}{entry['url']}"
+            output_path = SCREENSHOTS_DIR / f"{entry['name']}.png"
+            print(f"Capturing {entry['name']} ({entry['description']})...")  # noqa: T201
+            print(f"  URL: {url}")  # noqa: T201
 
-        # 2. Owners list
-        print("Capturing 02-owners-list...")
-        await page.goto("http://localhost:8080/owners")
-        await page.wait_for_load_state("networkidle")
-        await asyncio.sleep(2)  # wait for data to load
-        await page.screenshot(
-            path="docs/screenshots/02-owners-list.png", full_page=True
-        )
-
-        # 3. Owner detail (owner 1 - George Franklin)
-        print("Capturing 03-owner-detail...")
-        await page.goto("http://localhost:8080/owners/details/1")
-        await page.wait_for_load_state("networkidle")
-        await asyncio.sleep(2)
-        await page.screenshot(
-            path="docs/screenshots/03-owner-detail.png", full_page=True
-        )
-
-        # 4. Vets list
-        print("Capturing 04-vets-list...")
-        await page.goto("http://localhost:8080/vets")
-        await page.wait_for_load_state("networkidle")
-        await asyncio.sleep(2)
-        await page.screenshot(
-            path="docs/screenshots/04-vets-list.png", full_page=True
-        )
-
-        # 5. New Owner form
-        print("Capturing 05-new-owner-form...")
-        await page.goto("http://localhost:8080/owners/new")
-        await page.wait_for_load_state("networkidle")
-        await page.screenshot(
-            path="docs/screenshots/05-new-owner-form.png", full_page=False
-        )
-
-        # 6. Add Pet form (for owner 1)
-        print("Capturing 06-add-pet-form...")
-        await page.goto("http://localhost:8080/owners/1/new-pet")
-        await page.wait_for_load_state("networkidle")
-        await page.screenshot(
-            path="docs/screenshots/06-add-pet-form.png", full_page=False
-        )
-
-        # 7. Add Visit form (for owner 1, pet 1)
-        print("Capturing 07-add-visit-form...")
-        await page.goto("http://localhost:8080/owners/1/pets/1/visits")
-        await page.wait_for_load_state("networkidle")
-        await page.screenshot(
-            path="docs/screenshots/07-add-visit-form.png", full_page=False
-        )
+            try:
+                await page.goto(url, wait_until="networkidle", timeout=30000)
+                # Extra wait for CSS/JS to fully render
+                await asyncio.sleep(3)
+                await page.screenshot(
+                    path=str(output_path),
+                    full_page=entry["full_page"],
+                )
+                print(f"  Saved: {output_path}")  # noqa: T201
+            except Exception as exc:  # noqa: BLE001
+                print(f"  ERROR capturing {entry['name']}: {exc}")  # noqa: T201
 
         await browser.close()
-        print("All screenshots captured successfully!")
+        print("\nAll screenshots captured successfully!")  # noqa: T201
 
 
-asyncio.run(capture())
+if __name__ == "__main__":
+    asyncio.run(capture())

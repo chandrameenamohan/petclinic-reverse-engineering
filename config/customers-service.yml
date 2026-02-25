@@ -1,0 +1,5 @@
+# Customers Service — port 8081
+# Owns: owners, pets, types tables
+
+service_port: 8081
+database_url: "sqlite+aiosqlite:///./customers.db"

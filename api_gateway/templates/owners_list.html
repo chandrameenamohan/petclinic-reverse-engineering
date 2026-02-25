@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Owners — Petclinic{% endblock %}
+
+{% block content %}
+<h2>Owners</h2>
+
+<div class="mb-3">
+  <input type="text"
+         id="owner-search"
+         class="form-control"
+         placeholder="Search owners..."
+         oninput="filterOwners()">
+</div>
+
+{% if error %}
+<div class="alert alert-warning" role="alert">
+  Could not load owners. Please try again later.
+</div>
+{% else %}
+<table class="table table-striped" id="owners-table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th class="d-none d-lg-table-cell">Address</th>
+      <th>City</th>
+      <th>Telephone</th>
+      <th class="d-none d-md-table-cell">Pets</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for owner in owners %}
+    <tr>
+      <td>
+        <a href="/owners/details/{{ owner.id }}">{{ owner.firstName }} {{ owner.lastName }}</a>
+      </td>
+      <td class="d-none d-lg-table-cell">{{ owner.address }}</td>
+      <td>{{ owner.city }}</td>
+      <td>{{ owner.telephone }}</td>
+      <td class="d-none d-md-table-cell">{{ owner.pets | map(attribute='name') | join(' ') }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function filterOwners() {
+  const query = document.getElementById('owner-search').value.toLowerCase();
+  const rows = document.querySelectorAll('#owners-table tbody tr');
+  rows.forEach(function(row) {
+    const text = row.textContent.toLowerCase();
+    row.style.display = text.includes(query) ? '' : 'none';
+  });
+}
+</script>
+{% endblock %}

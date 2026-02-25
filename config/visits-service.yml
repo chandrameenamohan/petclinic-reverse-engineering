@@ -1,0 +1,5 @@
+# Visits Service — port 8082
+# Owns: visits table
+
+service_port: 8082
+database_url: "sqlite+aiosqlite:///./visits.db"

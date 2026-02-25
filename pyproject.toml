@@ -1,0 +1,120 @@
+[tool.poetry]
+name = "petclinic-python"
+version = "0.1.0"
+description = "Python/FastAPI rewrite of Spring Petclinic Microservices"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.11,<4.0"
+
+# Web framework
+fastapi = "^0.115"
+uvicorn = { version = "^0.34", extras = ["standard"] }
+
+# ORM & database
+sqlalchemy = { version = "^2.0", extras = ["asyncio"] }
+aiosqlite = "^0.21"
+asyncpg = "^0.30"
+
+# Validation & config
+pydantic = "^2.10"
+pydantic-settings = "^2.7"
+python-dotenv = "^1.0"
+pyyaml = "^6.0"
+
+# HTTP client
+httpx = "^0.28"
+
+# Resilience
+tenacity = "^9.0"
+pybreaker = "^1.2"
+
+# Observability
+prometheus-client = "^0.22"
+prometheus-fastapi-instrumentator = "^7.0"
+opentelemetry-api = "^1.29"
+opentelemetry-sdk = "^1.29"
+opentelemetry-exporter-zipkin = "^1.29"
+opentelemetry-instrumentation-fastapi = "^0.50b0"
+opentelemetry-instrumentation-httpx = "^0.50b0"
+opentelemetry-instrumentation-sqlalchemy = "^0.50b0"
+opentelemetry-propagator-b3 = "^1.29"
+
+# GenAI
+openai = "^1.60"
+numpy = "^2.0"
+chromadb = "^1.0"
+onnxruntime = "^1.18,<1.24"  # pin to versions with ARM64 macOS wheels
+
+# Caching
+cachetools = "^5.5"
+
+# Logging
+loguru = "^0.7"
+
+# Jinja2 templates (frontend)
+jinja2 = "^3.1"
+python-multipart = "^0.0.22"
+
+[tool.poetry.group.dev.dependencies]
+# Testing
+pytest = "^8.3"
+pytest-asyncio = "^0.25"
+pytest-cov = "^6.0"
+respx = "^0.22"
+
+# Linting & type checking
+ruff = "^0.9"
+mypy = "^1.14"
+
+# E2E testing
+playwright = "^1.49"
+pytest-playwright = "^0.6"
+types-pyyaml = "^6.0.12.20250915"
+types-cachetools = "^6.2.0.20251022"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+markers = [
+    "unit: Unit tests with mocked dependencies",
+    "integration: Integration tests with real DB",
+    "e2e: End-to-end tests across services",
+]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "ANN",  # flake8-annotations
+    "ASYNC",# flake8-async
+    "S",    # flake8-bandit
+    "T20",  # flake8-print (no print statements)
+]
+ignore = [
+    "ANN101", # missing type annotation for self
+    "ANN102", # missing type annotation for cls
+    "S101",   # assert used (needed in tests)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["ANN", "S101"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+plugins = ["pydantic.mypy"]
+ignore_missing_imports = true
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

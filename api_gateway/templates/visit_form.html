@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Add Visit — Petclinic{% endblock %}
+
+{% block content %}
+<h2>Visits</h2>
+
+{% if errors and errors._form %}
+<div class="alert alert-danger" role="alert">
+  {{ errors._form }}
+</div>
+{% endif %}
+
+<form method="post" novalidate>
+  <div class="mb-3">
+    <label for="date" class="form-label">Date</label>
+    <input type="date" class="form-control{% if errors and errors.date %} is-invalid{% endif %}"
+           id="date" name="date"
+           value="{{ form_data.date if form_data and form_data.date else today }}" required>
+    {% if errors and errors.date %}
+    <div class="invalid-feedback">{{ errors.date }}</div>
+    {% endif %}
+  </div>
+
+  <div class="mb-3">
+    <label for="description" class="form-label">Description</label>
+    <textarea class="form-control{% if errors and errors.description %} is-invalid{% endif %}"
+              id="description" name="description"
+              rows="3" required style="resize: vertical;">{{ form_data.description if form_data and form_data.description else '' }}</textarea>
+    {% if errors and errors.description %}
+    <div class="invalid-feedback">{{ errors.description }}</div>
+    {% endif %}
+  </div>
+
+  <button type="submit" class="btn btn-primary">Add New Visit</button>
+</form>
+
+<h3 class="mt-4">Previous Visits</h3>
+{% if visits %}
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for visit in visits %}
+    <tr>
+      <td>{{ visit.date }}</td>
+      <td>{{ visit.description }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No previous visits recorded.</p>
+{% endif %}
+{% endblock %}

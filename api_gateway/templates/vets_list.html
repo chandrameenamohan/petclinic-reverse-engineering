@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Veterinarians | Petclinic{% endblock %}
+
+{% block content %}
+<h2>Veterinarians</h2>
+
+{% if error %}
+<div class="alert alert-warning" role="alert">
+  Unable to load veterinarians. Please try again later.
+</div>
+{% endif %}
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Specialties</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for vet in vets %}
+    <tr>
+      <td>{{ vet.firstName }} {{ vet.lastName }}</td>
+      <td>{{ vet.specialties | map(attribute='name') | join(' ') }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

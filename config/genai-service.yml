@@ -1,0 +1,4 @@
+# GenAI Service — port 8084
+# AI chatbot with OpenAI function calling
+
+service_port: 8084

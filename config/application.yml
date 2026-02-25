@@ -1,0 +1,17 @@
+# Shared defaults for all petclinic services.
+# Per-service YAML files override these values.
+
+log_level: INFO
+
+# Infrastructure service URLs
+config_server_url: "http://localhost:8888"
+discovery_server_url: "http://localhost:8761"
+
+# Observability
+zipkin_endpoint: "http://localhost:9411/api/v2/spans"
+
+# Peer service URLs (defaults for local dev)
+customers_service_url: "http://localhost:8081"
+visits_service_url: "http://localhost:8082"
+vets_service_url: "http://localhost:8083"
+genai_service_url: "http://localhost:8084"

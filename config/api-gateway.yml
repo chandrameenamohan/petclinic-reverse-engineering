@@ -1,0 +1,4 @@
+# API Gateway — port 8080
+# Reverse proxy + BFF aggregation layer
+
+service_port: 8080

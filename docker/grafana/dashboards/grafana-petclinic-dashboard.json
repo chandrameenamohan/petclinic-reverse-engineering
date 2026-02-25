@@ -1,0 +1,199 @@
+{
+  "id": null,
+  "uid": "petclinic",
+  "title": "Spring Petclinic Metrics",
+  "timezone": "browser",
+  "schemaVersion": 16,
+  "version": 1,
+  "refresh": "5s",
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "templating": {
+    "list": []
+  },
+  "annotations": {
+    "list": []
+  },
+  "rows": [
+    {
+      "title": "HTTP Metrics",
+      "collapse": false,
+      "panels": [
+        {
+          "title": "HTTP Request Latency",
+          "type": "graph",
+          "id": 1,
+          "span": 6,
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "sum(rate(http_server_requests_seconds_sum{status!~\"5..\"}[1m]))/sum(rate(http_server_requests_seconds_count{status!~\"5..\"}[1m]))",
+              "legendFormat": "avg latency",
+              "refId": "A"
+            },
+            {
+              "expr": "max(http_server_requests_seconds_max{status!~\"5..\"})",
+              "legendFormat": "max latency",
+              "refId": "B"
+            }
+          ],
+          "yaxes": [
+            { "format": "s", "label": "Duration", "show": true },
+            { "format": "short", "show": false }
+          ],
+          "xaxis": { "show": true },
+          "lines": true,
+          "fill": 1,
+          "linewidth": 2,
+          "nullPointMode": "null"
+        },
+        {
+          "title": "HTTP Request Activity",
+          "type": "graph",
+          "id": 2,
+          "span": 6,
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "sum(rate(http_server_requests_seconds_count[1m]))",
+              "legendFormat": "total requests/s",
+              "refId": "A"
+            },
+            {
+              "expr": "sum(rate(http_server_requests_seconds_count{status=~\"5..\"}[1m]))",
+              "legendFormat": "5xx errors/s",
+              "refId": "B"
+            }
+          ],
+          "yaxes": [
+            { "format": "ops", "label": "Requests/s", "show": true },
+            { "format": "short", "show": false }
+          ],
+          "xaxis": { "show": true },
+          "lines": true,
+          "fill": 1,
+          "linewidth": 2,
+          "nullPointMode": "null"
+        }
+      ]
+    },
+    {
+      "title": "Business Metrics",
+      "collapse": false,
+      "panels": [
+        {
+          "title": "Owners Updated",
+          "type": "singlestat",
+          "id": 3,
+          "span": 3,
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "sum(petclinic_owner_seconds_count{method=\"updateOwner\", exception=\"none\"})",
+              "refId": "A"
+            }
+          ],
+          "valueName": "current",
+          "format": "none",
+          "sparkline": { "show": true, "full": false }
+        },
+        {
+          "title": "Owners Created",
+          "type": "singlestat",
+          "id": 4,
+          "span": 3,
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "sum(petclinic_owner_seconds_count{method=\"createOwner\", exception=\"none\"})",
+              "refId": "A"
+            }
+          ],
+          "valueName": "current",
+          "format": "none",
+          "sparkline": { "show": true, "full": false }
+        },
+        {
+          "title": "Pets Created",
+          "type": "singlestat",
+          "id": 5,
+          "span": 3,
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "sum(petclinic_pet_seconds_count{method=\"processCreationForm\", exception=\"none\"})",
+              "refId": "A"
+            }
+          ],
+          "valueName": "current",
+          "format": "none",
+          "sparkline": { "show": true, "full": false }
+        },
+        {
+          "title": "Visits Created",
+          "type": "singlestat",
+          "id": 6,
+          "span": 3,
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "sum(petclinic_visit_seconds_count{method=\"read\", exception=\"none\"})",
+              "refId": "A"
+            }
+          ],
+          "valueName": "current",
+          "format": "none",
+          "sparkline": { "show": true, "full": false }
+        }
+      ]
+    },
+    {
+      "title": "SPC Business Activity",
+      "collapse": false,
+      "panels": [
+        {
+          "title": "SPC Business Histogram",
+          "type": "graph",
+          "id": 7,
+          "span": 12,
+          "datasource": "Prometheus",
+          "targets": [
+            {
+              "expr": "sum(rate(petclinic_owner_seconds_count{method=\"createOwner\", exception=\"none\"}[1m]))",
+              "legendFormat": "owners created",
+              "refId": "A"
+            },
+            {
+              "expr": "sum(rate(petclinic_owner_seconds_count{method=\"updateOwner\", exception=\"none\"}[1m]))",
+              "legendFormat": "owners updated",
+              "refId": "B"
+            },
+            {
+              "expr": "sum(rate(petclinic_pet_seconds_count{method=\"processCreationForm\", exception=\"none\"}[1m]))",
+              "legendFormat": "pets created",
+              "refId": "C"
+            },
+            {
+              "expr": "sum(rate(petclinic_visit_seconds_count{method=\"read\", exception=\"none\"}[1m]))",
+              "legendFormat": "visits created",
+              "refId": "D"
+            }
+          ],
+          "yaxes": [
+            { "format": "ops", "label": "Operations/s", "show": true },
+            { "format": "short", "show": false }
+          ],
+          "xaxis": { "show": true },
+          "lines": true,
+          "fill": 1,
+          "linewidth": 2,
+          "nullPointMode": "null",
+          "bars": false,
+          "stack": false
+        }
+      ]
+    }
+  ]
+}

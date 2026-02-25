@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Owner — Petclinic{% endblock %}
+
+{% block content %}
+<h2>Owner Information</h2>
+
+{% if error %}
+<div class="alert alert-warning" role="alert">
+  Could not load owner details. Please try again later.
+</div>
+{% elif not owner %}
+<div class="alert alert-info" role="alert">
+  Owner not found.
+</div>
+{% else %}
+<table class="table table-striped">
+  <tbody>
+    <tr>
+      <th>Name</th>
+      <td>{{ owner.firstName }} {{ owner.lastName }}</td>
+    </tr>
+    <tr>
+      <th>Address</th>
+      <td>{{ owner.address }}</td>
+    </tr>
+    <tr>
+      <th>City</th>
+      <td>{{ owner.city }}</td>
+    </tr>
+    <tr>
+      <th>Telephone</th>
+      <td>{{ owner.telephone }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<a class="btn btn-outline-secondary" href="/owners/{{ owner.id }}/edit">Edit Owner</a>
+<a class="btn btn-outline-secondary" href="/owners/{{ owner.id }}/new-pet">Add New Pet</a>
+
+<h2 class="mt-4">Pets and Visits</h2>
+
+{% for pet in owner.pets %}
+<table class="table mt-3">
+  <tbody>
+    <tr>
+      <td style="width: 40%;" valign="top">
+        <dl>
+          <dt>Name</dt>
+          <dd><a href="/owners/{{ owner.id }}/pets/{{ pet.id }}">{{ pet.name }}</a></dd>
+          <dt>Birth Date</dt>
+          <dd>{{ pet.birthDate | format_date }}</dd>
+          <dt>Type</dt>
+          <dd>{{ pet.type.name if pet.type else '' }}</dd>
+        </dl>
+      </td>
+      <td valign="top">
+        <table class="table table-striped table-sm">
+          <thead>
+            <tr>
+              <th>Visit Date</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for visit in pet.visits %}
+            <tr>
+              <td>{{ visit.date }}</td>
+              <td>{{ visit.description }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <a class="btn btn-outline-secondary btn-sm" href="/owners/{{ owner.id }}/pets/{{ pet.id }}">Edit Pet</a>
+        <a class="btn btn-outline-secondary btn-sm" href="/owners/{{ owner.id }}/pets/{{ pet.id }}/visits">Add Visit</a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+{% endfor %}
+{% endif %}
+{% endblock %}

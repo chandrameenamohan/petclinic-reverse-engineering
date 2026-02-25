@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}{{ "Edit Pet" if edit_mode else "New Pet" }} — Petclinic{% endblock %}
+
+{% block content %}
+<h2>Pet</h2>
+
+{% if error %}
+<div class="alert alert-warning" role="alert">
+  Could not load pet data. Please try again later.
+</div>
+{% else %}
+{% if errors and errors._form %}
+<div class="alert alert-danger" role="alert">
+  {{ errors._form }}
+</div>
+{% endif %}
+<form method="post" novalidate>
+  <div class="mb-3">
+    <label class="form-label">Owner</label>
+    <input type="text" class="form-control" value="{{ owner_name }}" readonly disabled>
+  </div>
+
+  <div class="mb-3">
+    <label for="name" class="form-label">Name</label>
+    <input type="text" class="form-control{% if errors and errors.name %} is-invalid{% endif %}"
+           id="name" name="name"
+           value="{{ pet.name if pet and pet.name else '' }}" required>
+    {% if errors and errors.name %}
+    <div class="invalid-feedback">{{ errors.name }}</div>
+    {% endif %}
+  </div>
+
+  <div class="mb-3">
+    <label for="birthDate" class="form-label">Birth date</label>
+    <input type="date" class="form-control{% if errors and errors.birthDate %} is-invalid{% endif %}"
+           id="birthDate" name="birthDate"
+           value="{{ pet.birthDate if pet and pet.birthDate else '' }}" required>
+    {% if errors and errors.birthDate %}
+    <div class="invalid-feedback">{{ errors.birthDate }}</div>
+    {% endif %}
+  </div>
+
+  <div class="mb-3">
+    <label for="typeId" class="form-label">Type</label>
+    <select class="form-select{% if errors and errors.typeId %} is-invalid{% endif %}"
+            id="typeId" name="typeId" required>
+      {% for pt in pet_types %}
+      <option value="{{ pt.id }}"{% if pet and pet.typeId|string == pt.id|string %} selected{% endif %}>{{ pt.name }}</option>
+      {% endfor %}
+    </select>
+    {% if errors and errors.typeId %}
+    <div class="invalid-feedback">{{ errors.typeId }}</div>
+    {% endif %}
+  </div>
+
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endif %}
+{% endblock %}

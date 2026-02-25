@@ -22,7 +22,7 @@ This is not a partial port or proof-of-concept. It is a **complete reverse engin
 
 ## Application Screenshot
 
-![Application Screenshot](docs/application-screenshot.png)
+> **Note:** To see the application UI, start the stack with `docker compose up --build` and visit http://localhost:8080. The Python/FastAPI version faithfully reproduces the original Petclinic UI using HTMX and Jinja2 server-side rendering.
 
 The Python version faithfully reproduces the original Spring Petclinic UI, including the owners list, owner details with pets and visits, veterinarians list, and all CRUD forms. The chat widget is visible on every page.
 
@@ -30,38 +30,57 @@ The Python version faithfully reproduces the original Spring Petclinic UI, inclu
 
 **Architecture diagram of the Python Petclinic Microservices** (same topology as the Java original):
 
-![Architecture Diagram](docs/microservices-architecture-diagram.jpg)
-
-```
-                        +------------------+
-                        |   API Gateway    |
-                        |   (port 8080)    |
-                        |   HTMX + Jinja2  |
-                        +--------+---------+
-                                 |
-                +----------------+----------------+
-                |                |                |
-     +----------+------+ +------+--------+ +-----+----------+
-     |   Customers     | |    Visits     | |     Vets       |
-     |   Service       | |   Service     | |   Service      |
-     |  (port 8081)    | |  (port 8082)  | |  (port 8083)   |
-     +-----------------+ +---------------+ +----------------+
-                |                |                |
-                +----------------+----------------+
-                                 |
-     +---------------------------+---------------------------+
-     |                           |                           |
-+----+------------+  +-----------+---------+  +--------------+---+
-|  Config Server  |  |  Discovery Server   |  |  GenAI Service   |
-|  (port 8888)    |  |   (port 8761)       |  |  (port 8084)     |
-+-----------------+  +----------+----------+  +------------------+
-                                |
-                    +-----------+---------+
-                    |   Admin Server      |
-                    |   (port 9090)       |
-                    +---------------------+
-
-Observability: Prometheus (9091) | Grafana (3000) | Zipkin (9411)
+```mermaid
+graph TB
+    subgraph "Client"
+        Browser["Browser"]
+    end
+    subgraph "API Gateway (FastAPI + HTMX/Jinja2) :8080"
+        GW["Reverse Proxy (httpx)<br/>Circuit Breaker (pybreaker)<br/>BFF Aggregation<br/>Server-Side Rendering"]
+    end
+    subgraph "Business Services (FastAPI + SQLAlchemy Async)"
+        CS["Customers Service :8081<br/>Owners & Pets CRUD<br/>SQLite / PostgreSQL"]
+        VS["Visits Service :8082<br/>Visit Scheduling<br/>SQLite / PostgreSQL"]
+        VT["Vets Service :8083<br/>Vet Directory (cached)<br/>SQLite / PostgreSQL"]
+    end
+    subgraph "GenAI Service (FastAPI + OpenAI SDK) :8084"
+        AI["Chat Endpoint<br/>Function Calling (Tools)<br/>ChromaDB RAG"]
+    end
+    subgraph "Infrastructure Services (FastAPI)"
+        CFG["Config Server :8888<br/>YAML file-based"]
+        DISC["Discovery Server :8761<br/>In-memory registry"]
+        ADM["Admin Server :9090<br/>Health monitoring"]
+    end
+    subgraph "Observability"
+        ZIP["Zipkin :9411<br/>OpenTelemetry traces"]
+        PROM["Prometheus :9091<br/>Metrics collection"]
+        GRAF["Grafana :3030<br/>Dashboards"]
+    end
+    Browser --> GW
+    GW --> CS
+    GW --> VS
+    GW --> VT
+    GW --> AI
+    AI -->|"function calling"| CS
+    AI -->|"RAG ingest"| VT
+    CS --> CFG
+    VS --> CFG
+    VT --> CFG
+    AI --> CFG
+    CS --> DISC
+    VS --> DISC
+    VT --> DISC
+    AI --> DISC
+    ADM --> DISC
+    CS --> ZIP
+    VS --> ZIP
+    VT --> ZIP
+    GW --> ZIP
+    PROM --> CS
+    PROM --> VS
+    PROM --> VT
+    PROM --> GW
+    GRAF --> PROM
 ```
 
 ## Tech Stack Mapping: Java/Spring to Python/FastAPI
@@ -194,7 +213,7 @@ Spring Petclinic includes a chatbot that allows you to interact with the applica
 5. Add a dog for Betty. Its name is Moopsie.
 6. Create a new owner.
 
-![GenAI Chat](docs/spring-ai.png)
+> **Chat Widget:** The GenAI chatbot is accessible from the bottom-right corner of every page. It uses the OpenAI Python SDK with function calling to query owners, pets, vets, and create visits through natural language. Vet data is also indexed in ChromaDB for RAG-based retrieval.
 
 ### How It Works
 
@@ -248,7 +267,7 @@ Database schema is created automatically at startup, and seed data is loaded if 
 
 Grafana and Prometheus are included in the `docker-compose.yml` configuration. The business services have been instrumented with [prometheus-fastapi-instrumentator](https://github.com/trallnag/prometheus-fastapi-instrumentator) to collect custom business metrics alongside standard HTTP request metrics.
 
-![Grafana Dashboard](docs/grafana-custom-metrics-dashboard.png)
+> **Grafana Dashboard:** Available at http://localhost:13030 after starting with Docker Compose. Pre-configured with Prometheus datasource and custom Petclinic metrics dashboard showing request latency, throughput, and business metrics.
 
 ### Using Prometheus
 

@@ -103,3 +103,35 @@ bd sync               # Sync with git
 5. `d54f21d` — Update screenshots with fully styled Docker Compose app
 6. `a3f4280` — Rebrand from Spring to Python/FastAPI theme
 
+## Session Log: 2026-02-26 — Screenshots, Grafana Fix, and LOC Comparison
+
+### What Was Done
+1. **Project Exploration** — Ran a team of 3 agents to understand the project, compare against the Java original at `/Users/ralph/Projects/spring-petclinic-microservices`, and identify missing screenshots (Grafana dashboard and GenAI chat widget)
+2. **Beads Reinitialization** — The Dolt database was corrupted (nil pointer dereference crash on every `bd` command, including `bd doctor --fix`). Deleted `.beads/dolt/` and ran `bd init` to get a fresh database
+3. **Beads Task Tracking** — Created 4 tasks with dependencies: capture Grafana screenshot → capture chat screenshot → update README → commit & push
+4. **Docker Compose Stack** — Started full 11-container stack, generated ~330 HTTP requests for Grafana metrics population
+5. **Chat Widget Screenshot** — Captured `08-chat-widget.png` using Playwright: expanded the "Chat with Us!" widget, sent "hello" and "Who has dogs?" messages, waited for AI responses, screenshotted the chatbox element
+6. **Grafana Dashboard Fix** — The existing `grafana-petclinic-dashboard.json` used legacy `rows` format (schemaVersion 16) which Grafana 10.x renders as an empty "Add visualization" page. Rewrote to modern `panels` format (schemaVersion 39) with `timeseries` and `stat` panel types. Updated metric queries to use actual `petclinic_*` Prometheus metrics
+7. **Grafana Dashboard Screenshot** — Captured `09-grafana-dashboard.png` showing: Owner Operation Latency (avg + p99), Request Throughput, Business Metrics counters (258 owner ops, 202 visit ops, 3 services up, 352 MB memory), and Operation Rate by Method histogram
+8. **README Updates** — Added chat and Grafana screenshots to the Application Screenshots table, plus inline references in the GenAI and Grafana documentation sections
+9. **Enhanced Capture Script** — Added `capture_chat_screenshot()` and `capture_grafana_screenshot()` functions to `scripts/capture_screenshots.py`
+10. **Lines of Code Comparison** — Ran a team of 2 agents (one per project) to count LOC. Added a full comparison section to README with per-service breakdown and per-category totals: Python app source is ~25% larger (4,453 vs 3,576), test code is 21x larger (9,663 vs 458), config is 66% lighter (668 vs 1,996)
+
+### Issues Encountered and Solutions
+1. **Beads Dolt corruption (recurring)** — Same nil pointer dereference as session 1, but now `bd doctor --fix` also crashes. **Solution:** Delete `.beads/dolt/` directory and `dolt-access.lock`, then `bd init` for a fresh database. Previous task history in `issues.jsonl` is preserved.
+2. **Grafana dashboard empty** — The provisioned dashboard JSON used legacy `rows` format incompatible with Grafana 10.x. **Fix:** Rewrote to modern `panels` format with `gridPos` layout, `timeseries`/`stat` panel types, and explicit datasource UIDs.
+3. **Background shell missing curl** — Background `run_in_background` bash commands don't have `/usr/bin/curl` in PATH. **Fix:** Use full path `/usr/bin/curl` in background commands.
+4. **Prometheus metric names** — Dashboard initially used `http_request_duration_seconds` (not exposed by FastAPI services). **Fix:** Queried `http://localhost:19091/api/v1/label/__name__/values` to discover actual metrics (`petclinic_owner_seconds_*`, `petclinic_visit_seconds_*`), then updated dashboard queries accordingly.
+5. **Chat bot unable to query owners** — The GenAI service couldn't access the customers service during screenshot capture (responded "I currently cannot access the information"). The screenshot still shows the chat widget working with real AI responses, which is sufficient for documentation.
+
+### Beads Tasks This Session
+- petclinic-reverse-engineering-g4n — Capture Grafana dashboard screenshot (CLOSED)
+- petclinic-reverse-engineering-8vr — Capture GenAI chat widget screenshot (CLOSED)
+- petclinic-reverse-engineering-ulo — Update README with Grafana and chat screenshots (CLOSED)
+- petclinic-reverse-engineering-h41 — Git commit and push screenshot updates (CLOSED)
+- petclinic-reverse-engineering-yte — Add LOC comparison to README (CLOSED)
+
+### Git Commits This Session
+1. `5656150` — Add Grafana dashboard and GenAI chat widget screenshots
+2. `436a51c` — Add Lines of Code comparison section to README
+
